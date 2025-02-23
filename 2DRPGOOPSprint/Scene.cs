@@ -16,9 +16,17 @@ namespace _2DRPGOOPSprint
 
         public void LoadInitialScene(TextureManager textureManager)
         {
+            Tilemap tilemap = new Tilemap();
+            tilemap.GenerateTilemap(10, 15);
             Player player = new Player(new Vector2(100, 100));
             player.LoadContent(textureManager);
+            foreach (Tile tile in tilemap.tiles)
+            {
+                tile.LoadContent(textureManager);
+                entities.Add(tile);
+            }
             entities.Add(player);
+            
         }
 
         public void DrawAll(SpriteBatch spriteBatch)
