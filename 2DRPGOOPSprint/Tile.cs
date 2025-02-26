@@ -5,18 +5,18 @@ namespace _2DRPGOOPSprint
 {
     public class Tile : GameEntity, IDrawable
     {
-        private Texture2D _texture;
-        private Vector2 _position;
-        private string _tileType;
-        public Texture2D Texture { get => _texture; }
-        public Vector2 Position { get => _position; }
-        public TileType Type { get; set; }
+        public Texture2D Texture { get; private set; } // No need for a backing field
+        public Vector2 Position { get; private set; }
+        public TileType Type { get; private set; }
+
+        public bool IsCollidable => Type != TileType.ground;
+
+        public Rectangle Bounds => new((int)Position.X, (int)Position.Y, Texture?.Width ?? 32, Texture?.Height ?? 32);
 
         public Tile(Vector2 position, TileType type)
         {
-            _position = position;
+            Position = position;
             Type = type;
-            _tileType = type.ToString();
         }
         public void Draw(SpriteBatch spriteBatch)
         {
@@ -30,12 +30,33 @@ namespace _2DRPGOOPSprint
 
         public void LoadContent(TextureManager textureManager)
         {
-            _texture = textureManager.GetTexture(_tileType);
+            Texture = textureManager.GetTexture(Type.ToString());
+        }
+
+        public bool Intersects(IDrawable other)
+        {
+            if (other is Player player)
+            {
+                return Bounds.Intersects(player.Bounds);
+            }
+            return false;
+        }
+
+        public void OnCollision(IDrawable other)
+        {
+            
         }
     }
     public enum TileType
     {
         ground,
+        east_wall,
+        top_west_wall,
+        top_east_wall,
+        bottom_west_wall,
+        bottom_east_wall,
+        west_wall,
+        north_wall,
+        south_wall
     }
-
 }

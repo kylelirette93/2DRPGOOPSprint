@@ -25,8 +25,30 @@ namespace _2DRPGOOPSprint
                 tile.LoadContent(textureManager);
                 entities.Add(tile);
             }
-            entities.Add(player);
-            
+            entities.Add(player);        
+        }
+
+        public void CheckCollisions()
+        {
+            foreach (GameEntity entity in entities)
+            {
+                if (entity is IDrawable drawable)
+                {
+                    foreach (GameEntity otherEntity in entities)
+                    {
+                        if (otherEntity is IDrawable otherDrawable && !ReferenceEquals(drawable, otherDrawable))
+                        {
+                            // Check if they are colliding
+                            if (drawable.Bounds.Intersects(otherDrawable.Bounds))
+                            {
+                                // Handle the collision for both entities
+                                drawable.OnCollision(otherDrawable);   // Notify the first entity (could be player)
+                                otherDrawable.OnCollision(drawable);   // Notify the second entity (could be tile or another entity)
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         public void DrawAll(SpriteBatch spriteBatch)
@@ -46,6 +68,7 @@ namespace _2DRPGOOPSprint
             {
                 entity.Update(gameTime);
             }
+            CheckCollisions();
         }
 }
 }
